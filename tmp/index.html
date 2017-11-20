@@ -1,0 +1,509 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>ZMI Wireless Router</title>        
+
+        <script type="text/javascript" src="js/jquery/jquery.js" language="javascript"></script>
+         <script type="text/javascript">
+             var g_platformName = "mifi";      
+             if (typeof jQuery == 'undefined') { 
+		//	document.location = "http://192.168.21.1?c=" + (new Date()).valueOf();
+			window.location.reload(true);
+		}  
+        </script>
+        <script type="text/javascript" src="js/jquery/jquery.i18n.properties-1.0.4.js" language="javascript"></script>
+        <script type="text/javascript" src="js/library/jquery.form.js" language="javascript"></script>
+        <script type="text/javascript" src="js/library/download.jQuery.js" language="javascript"></script>
+		<script type="text/javascript" src="js/library/base64.js" language="javascript"></script> 
+		<script type="text/javascript" src="js/library/utf8.js" language="javascript"></script>  
+        <script type="text/javascript" src="js/library/md5.js" language="javascript"></script>
+        <script type="text/javascript" src="js/library/table.js" language="javascript"></script>
+        <script type="text/javascript" src="js/library/modaldbox.js" language="javascript"></script>
+        <script type="text/javascript" src="js/base/ajax_calls.js" language="javascript"></script>
+        <script type="text/javascript" src="js/base/utils.js" language="javascript"></script>
+        <script type="text/javascript" src="js/base/xml_helper.js" language="javascript"></script>
+        <script type="text/javascript" src="js/base/layout_manager.js" language="javascript"></script>
+        <script type="text/javascript" src="js/base/validator.js" language="javascript"></script>
+        <script type="text/javascript" src="js/controls/enabled_disabled.js" language="javascript"></script>
+        <script type="text/javascript" src="js/controls/ip_address.js" language="javascript"></script>
+        <script type="text/javascript" src="js/controls/visible_invisible.js" language="javascript"></script>
+        <script type="text/javascript" src="js/controls/allow_deny.js" language="javascript"></script>
+		<script type="text/javascript" src="js/controls/always_ondemand.js" language="javascript"></script>
+		<script type="text/javascript" src="js/controls/ascii_hex.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/dashboard.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/quick_setup.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/wireless/primary_network.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/internet/internet_connection.js" language="javascript"></script>
+        <script type="text/javascript" src="js/panel/router/user_management.js" language="javascript"></script>
+		
+        <script type="text/javascript" src="js/panel/router/software_upgrade.js" language="javascript"></script>
+        <script type="text/javascript" src="js/panel/router/conf_management.js" language="javascript"></script>
+        <script type="text/javascript" src="js/panel/router/reboot_router.js" language="javascript"></script>
+        <script type="text/javascript" src="js/panel/router/time_setting.js" language="javascript"></script>
+        <script type="text/javascript" src="js/panel/wireless/wireless_settings.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/wireless/wireless_mac_filters.js" language="javascript"></script>
+       	<script type="text/javascript" src="js/panel/home_network/network_activity.js" language="javascript"></script>
+        <script type="text/javascript" src="js/panel/home_network/dhcp_settings.js" language="javascript"></script>
+        <script type="text/javascript" src="js/panel/home_network/firewall_settings.js" language="javascript"></script>
+        <script type="text/javascript" src="js/panel/home_network/connected_device.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/home_network/custom_fw.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/home_network/port_forwarding.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/home_network/port_filter.js" language="javascript"></script>
+      	<script type="text/javascript" src="js/panel/internet/manual_network.js" language="javascript"></script>
+        <script type="text/javascript" src="js/panel/internet/traffic_statistics.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/internet/mep.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/internet/pin_puk.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/internet/traffic_setting.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/home_network/data_traffic.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/router/usbnetmanage.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/SMS/SMS.js" language="javascript"></script>
+		<script type="text/javascript" src="js/panel/SMS/SMSSettings.js" language="javascript"></script>  
+		
+
+        <link href="css/stylesheet.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" type="text/css" href="css/table.css" >
+        <link rel="stylesheet" type="text/css" href="css/modaldbox.css">
+
+
+	<link type="application/rss+xml" rel='alternate' href='ap-x.rss'/>
+
+        <script type="text/javascript">
+          //  var locale;
+            function setLocale(value){
+                setCookie("locale",value,365);
+                setLocalization(getCookie('locale'));
+                var strLocale=getCookie('locale');
+                var locale_lan;
+                if(strLocale == 'en'){
+            	  	locale_lan= 'en';
+            	  	zmlb="images/logo_blue_en.png";
+            	  	zml="images/logo_en.png";
+            	  	
+            	  }else if(strLocale == 'jp'){
+            	  	locale_lan = 'jp';
+            	  	zmlb="images/logo_blue_jp.png";
+            	  	zml="images/logo_jp.png";
+            	  }else if(strLocale == 'hk'){
+            	  	locale_lan = 'hk';
+            	  	zmlb="images/logo_blue_hk.png";
+            	  	zml="images/logo_hk.png";
+            	  }else{
+            	  	locale_lan = 'cn';
+            	  	zmlb="images/logo_blue_cn.png";
+            	  	zml="images/logo_cn.png";
+            	  	}
+            	  $("#zlogoblue").attr("src",zmlb);
+               postXMLlocale("locale", "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><RGW><locale><language>"+locale_lan+"</language></locale></RGW>",15000);
+                displayControls();
+                document.getElementById("tbarouter_password").focus();  
+                document.getElementById("btnSignIn").disabled = false;
+            }
+			function Indexstatusshow(){
+				var xml = callProductXML("locale");
+				var language = $(xml).find("language").text(); 
+				$(xml).find("wan").each(function() {
+				var NW_register_status = $(this).find("NW_register_status").text();
+				var network_name = $(this).find("network_name").text();
+				var data_conn_mode = $(this).find("sys_submode").text();
+				var sys_mode = $(this).find("sys_mode").text();
+				var sim_status = $(this).find("sim_status").text();
+				var rssi = $(this).find("rssi").text();
+				var roaming_network_name = $(this).find("roaming_network_name").text();
+				var bConnectindexStatus = false;
+				$(this).find("pdp_context_list").each(function() {
+                    $(this).find("Item").each(function() {
+                        if ("1" == $(this).find("success").text())
+                            bConnectindexStatus = true;
+					})
+                })
+				if(sim_status == "1"){
+					//setLabelValueProp("scopyright", "lSIMAbsent");
+					//document.getElementById("scopyright").innerHTML =jQuery.i18n.prop("lSIMAbsent");
+					if(language == "cn")
+					document.getElementById("iindexstatusimg").src = "images/nosimc_cn.png";
+					else if(language == "jp")
+					document.getElementById("iindexstatusimg").src = "images/nosimc_jp.png";
+					else if(language == "hk")
+					document.getElementById("iindexstatusimg").src = "images/nosimc_hk.png";
+					else 
+					document.getElementById("iindexstatusimg").src = "images/nosimc_en.png";
+				}
+				else if (NW_register_status == "2"){
+					//document.getElementById("scopyright").innerHTML=jQuery.i18n.prop("lINREGISTER");
+					if(language == "cn")
+					document.getElementById("iindexstatusimg").src = "images/noservice.png";
+					else if (language == "jp")
+					document.getElementById("iindexstatusimg").src = "images/noservice.png";
+					else
+					document.getElementById("iindexstatusimg").src = "images/noservice.png";
+				}else{			
+							
+								if (sys_mode == 3) { //GSM
+                                    if(!bConnectindexStatus){
+								if (rssi <= 15)
+                                            document.getElementById("iindexstatusimg").src = "images/nc1.png";
+                                        else if (rssi >= 16 && rssi <= 20)
+                                            document.getElementById("iindexstatusimg").src = "images/nc2.png";
+                                        else if (rssi >= 21 && rssi <= 25)
+                                            document.getElementById("iindexstatusimg").src = "images/nc3.png";
+                                        else if (rssi >= 26)
+                                            document.getElementById("iindexstatusimg").src = "images/nc4.png";
+							}else{
+                                        if (rssi <= 15)
+                                            document.getElementById("iindexstatusimg").src = "images/2g_1.png";
+                                        else if (rssi >= 16 && rssi <= 20)
+                                            document.getElementById("iindexstatusimg").src = "images/2g_2.png";
+                                        else if (rssi >= 21 && rssi <= 25)
+                                            document.getElementById("iindexstatusimg").src = "images/2g_3.png";
+                                        else if (rssi >= 26)
+                                            document.getElementById("iindexstatusimg").src = "images/2g_4.png";
+                                    
+
+                                }}  else if (sys_mode == 15) { //TD
+                                    if(!bConnectindexStatus){
+								if (rssi <= 25)
+                                            document.getElementById("iindexstatusimg").src = "images/nc1.png";
+                                        else if (rssi >= 26 && rssi <= 30)
+                                            document.getElementById("iindexstatusimg").src = "images/nc2.png";
+                                        else if (rssi >= 31 && rssi <= 35)
+                                            document.getElementById("iindexstatusimg").src = "images/nc3.png";
+                                        else if (rssi >= 36)
+                                            document.getElementById("iindexstatusimg").src = "images/nc4.png";
+							}else{
+                                        if (rssi <= 25)
+                                            document.getElementById("iindexstatusimg").src = "images/3g_1.png";
+                                        else if (rssi >= 26 && rssi <= 30)
+                                            document.getElementById("iindexstatusimg").src = "images/3g_2.png";
+                                        else if (rssi >= 31 && rssi <= 35)
+                                            document.getElementById("iindexstatusimg").src = "images/3g_3.png";
+                                        else if (rssi >= 36)
+                                            document.getElementById("iindexstatusimg").src = "images/3g_4.png";
+                                    //document.getElementById("scopyright").innerHTML = "3G"
+                                    //setLabelValue("lcconnectivitymode", "TD-SCDMA");
+                                }} else if (sys_mode == 5) { //WCDMA	
+                                    if(!bConnectindexStatus){
+								if (rssi <= 25)
+                                            document.getElementById("iindexstatusimg").src = "images/nc1.png";
+                                        else if (rssi >= 26 && rssi <= 30)
+                                            document.getElementById("iindexstatusimg").src = "images/nc2.png";
+                                        else if (rssi >= 31 && rssi <= 35)
+                                            document.getElementById("iindexstatusimg").src = "images/nc3.png";
+                                        else if (rssi >= 36)
+                                            document.getElementById("iindexstatusimg").src = "images/nc4.png";
+							}else{
+                                        if (rssi <= 25)
+                                            document.getElementById("iindexstatusimg").src = "images/3g_1.png";
+                                        else if (rssi >= 26 && rssi <= 30)
+                                            document.getElementById("iindexstatusimg").src = "images/3g_2.png";
+                                        else if (rssi >= 31 && rssi <= 35)
+                                            document.getElementById("iindexstatusimg").src = "images/3g_3.png";
+                                        else if (rssi >= 36)
+                                            document.getElementById("iindexstatusimg").src = "images/3g_4.png";
+                                    //document.getElementById("scopyright").innerHTML = "3G"
+                                    //setLabelValue("lcconnectivitymode", "TD-SCDMA");
+                                }}else if (sys_mode == 17) { //LTE
+									if(!bConnectindexStatus){
+								if (rssi <= 23)
+                                            document.getElementById("iindexstatusimg").src = "images/nc1.png";
+                                        else if (rssi >= 24 && rssi <= 32)
+                                            document.getElementById("iindexstatusimg").src = "images/nc2.png";
+                                        else if (rssi >= 33 && rssi <= 39)
+                                            document.getElementById("iindexstatusimg").src = "images/nc3.png";
+                                        else if (rssi >= 40)
+                                            document.getElementById("iindexstatusimg").src = "images/nc4.png";
+							}else{
+                                    if (rssi <= 23)
+                                        document.getElementById("iindexstatusimg").src = "images/4g_1.png";
+                                    else if (rssi >= 24 && rssi <= 32)
+                                        document.getElementById("iindexstatusimg").src = "images/4g_2.png";
+                                    else if (rssi >= 33 && rssi <= 39)
+                                        document.getElementById("iindexstatusimg").src = "images/4g_3.png";
+                                    else if (rssi >= 40)
+                                        document.getElementById("iindexstatusimg").src = "images/4g_4.png";
+                                        //document.getElementById("scopyright").innerHTML = "4G"
+                                    //setLabelValue("lcconnectivitymode", "LTE");
+                               } }
+                                 else
+                                {	document.getElementById("iindexstatusimg").src = "images/noservice.png";
+                                	//document.getElementById("scopyright").innerHTML = jQuery.i18n.prop("lServiceAbsent");
+                                    //setLabelValue("lcconnectivitymode", "No Service");
+                                }
+
+                                switch (data_conn_mode) {
+                                    case '3':
+                                        data_conn_mode_string = 'EDGE';
+                                        //document.getElementById("scopyright").innerHTML = "2G"
+                                        //setLabelValue("lcconnectivitymode", "EDGE");
+                                        break;
+                                    case '2':
+                                        data_conn_mode_string = 'GPRS';
+                                        break;
+                                    case '5':
+                                        data_conn_mode_string = 'HSDPA';
+                                        break;
+                                    case '6':
+                                        data_conn_mode_string = 'HSUPA';
+                                        break;
+                                    case '7':
+                                        data_conn_mode_string = 'HSDPA+HSUPA';
+                                        break;
+                                    case '17':
+                                        data_conn_mode_string = 'TD-LTE';
+                                        break;
+                                    default:
+                                        data_conn_mode_string = 'EDGE';
+                                        break;
+                                }
+				}
+					
+				});
+			}
+            
+		function display_index_status(){
+			_zstimeSettingsIntervalID = setInterval("Indexstatusshow()", _timeSettingsInterval);	
+		}
+           function  displayControls(){
+           Indexstatusshow();
+           
+           //Indexstatusshow();
+               document.getElementById("laUsername").innerHTML=jQuery.i18n.prop("laUsername");
+                document.getElementById("laPassword").innerHTML=jQuery.i18n.prop("laPassword");
+                document.getElementById("btnSignIn").value = jQuery.i18n.prop("btnSignIn");
+	       //document.getElementById("lTitleUAPXC").innerHTML = jQuery.i18n.prop("lTitleUAPXC");
+	       document.getElementById("lacopyright").innerHTML = jQuery.i18n.prop("lacopyright");
+	       if("Ver.B"==getHardware_Version() ||"Ver.C"==getHardware_Version())
+					$("#lvhomepage").hide();
+				else
+					$("#lvhomepage").show();
+	       document.getElementById("lvhomepage").innerHTML = jQuery.i18n.prop("lvhomepage");
+	       
+
+           }
+        function Login()
+        {
+            var username=encodeURIComponent(document.getElementById("tbarouter_username").value);
+            var password=encodeURIComponent(document.getElementById("tbarouter_password").value);
+	    var login_done;
+
+            //setLocalization(getCookie("locale"));
+            if(username=="" ||password=="")
+            	login_done = 0;
+            else
+            	login_done = doLogin(username,password)
+	    if(login_done == 1){
+				clearInterval(_zstimeSettingsIntervalID);
+                document.getElementById("divAdminApp").innerHTML =callProductHTML("html/adminApp.html");
+                
+                document.getElementById("lableWelcome").innerHTML = jQuery.i18n.prop("lableWelcome");
+				document.getElementById("quickSetup").innerHTML = jQuery.i18n.prop("quickSetupName");
+				document.getElementById("MainHelp").innerHTML = jQuery.i18n.prop("helpName");
+				document.getElementById("MainLogOut").innerHTML = jQuery.i18n.prop("LogOutName");
+				if("Ver.B"==getHardware_Version()||"Ver.C"==getHardware_Version())
+					$("#lvhomepage").hide();
+				else
+					$("#lvhomepage").show();
+				document.getElementById("lvhomepage").innerHTML = jQuery.i18n.prop("lvhomepage");
+				$("#zmlogo").attr("src",zml);
+                document.getElementById("divAdminApp").className = "";
+                document.getElementsByTagName("body")[0].className = "";
+
+                initAPP();
+
+            }
+            else {
+              // document.getElementById('lloginfailed').style.display = 'block';
+               if(login_done == 0){
+               		document.getElementById('lloginfailed').style.display = 'block';
+                    document.getElementById("lloginfailed").innerHTML = jQuery.i18n.prop("lloginfailed");}
+	       else if(login_done == -1){
+	       document.getElementById('lloginfailed').style.display = 'block';
+		    document.getElementById("lloginfailed").innerHTML = jQuery.i18n.prop("lnoconn");}
+            }
+        }
+        function checkEnter(e)
+        {
+
+            var characterCode;
+            if(e && e.which){
+                e = e
+                characterCode = e.which
+            } else {
+                e = event
+                characterCode = e.keyCode
+            }
+            if(characterCode == 13&&document.getElementById("btnSignIn").disabled == false){
+                Login();
+            }
+        }
+        function hideError(){
+            document.getElementById('lloginfailed').style.display = 'none';
+        }
+         var versionString;
+   function initIndex(){
+   	if("IE6" == GetBrowserType())
+   	{
+
+		var fileref=document.createElement('script');
+  		fileref.setAttribute("type","text/javascript");
+  		fileref.setAttribute("src", 'js/jquery/jquery.bgiframe.min.js');
+
+  		document.getElementsByTagName("head")[0].appendChild(fileref);
+   	}
+		document.getElementById("btnSignIn").disabled = true;
+       var objXML =  $().XML_Operations();
+       var versionXMLData = getVersionXML("version_num.txt");
+       var versionXML = objXML.getXMLDOCVersion(versionXMLData);
+
+       var strVesrion =  $(versionXML).find("firmware_version").text();
+       strVesrion=strVesrion.substring(strVesrion.indexOf("mifi", 0),strVesrion.length);
+       strVesrion=strVesrion.replace("_"," ");
+       //document.getElementById("version").innerHTML=strVesrion;
+       versionString = strVesrion;
+
+       document.getElementById("tbarouter_password").focus();
+          var xml = callProductXML("locale");
+         var language = $(xml).find("language").text();
+         var zhard_ver = $(xml).find("hardware_version").text();
+         if(language == "en")
+         {		
+         	 zmlb="images/logo_blue_en.png";
+             zml="images/logo_en.png";
+         	 setLocalization("en");
+         	 setCookie("locale", "en", 365);
+         }
+         else if(language == "hk")
+         {	
+         	zmlb="images/logo_blue_hk.png";
+            zml="images/logo_hk.png";
+         	setLocalization("hk");
+         	setCookie("locale", "hk", 365);
+         }
+         else if(language == "jp")
+         {	
+         	zmlb="images/logo_blue_jp.png";
+            zml="images/logo_jp.png";
+         	setLocalization("jp");
+         	setCookie("locale", "jp", 365);
+         }else{
+         	zmlb="images/logo_blue_cn.png";
+            zml="images/logo_cn.png";
+         	setLocalization("cn");
+         	setCookie("locale", "cn", 365);
+         }
+         $("#zlogoblue").attr("src",zmlb);
+         //var hv=getHardware_Version()
+   		if(zhard_ver=="MF96 Ver.B")	{
+	   		setCookie("hard_ver", "Ver.B", 365);
+	   		zhard_version = "Ver.B";
+	   		document.getElementById("langswitch").innerHTML="<a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('jp')\">日本語</a> | <a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('cn')\">简体</a> | <a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('hk')\">繁體</a> | <a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('en')\">English</a>"
+
+   		}else if(zhard_ver=="MF96 Ver.C")	{
+	   		setCookie("hard_ver", "Ver.C", 365);
+	   		zhard_version = "Ver.C";
+	   		document.getElementById("langswitch").innerHTML="<a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('jp')\">日本語</a> | <a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('cn')\">简体</a> | <a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('hk')\">繁體</a> | <a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('en')\">English</a>"
+
+   		}else if(zhard_ver=="MF96 Ver.D"){
+	   		setCookie("hard_ver", "Ver.D", 365);
+	   		zhard_version = "Ver.D";
+	   		document.getElementById("langswitch").innerHTML="<a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('cn')\">简体</a> | <a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('en')\">English</a> | <a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('hk')\">繁體</a> | <a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('jp')\">日本語</a> "
+
+   		}else{
+	   		setCookie("hard_ver", "Ver.A", 365);
+	   		zhard_version = "Ver.A";
+	   		document.getElementById("langswitch").innerHTML="<a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('cn')\">简体</a> | <a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('en')\">English</a> | <a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('hk')\">繁體</a> | <a href=\"#.\" style=\"color:#fff;\" onclick=\"setLocale('jp')\">日本語</a> "
+
+   		}
+		setCookie("platform", "mifi", 365);
+		
+         displayControls();
+         display_index_status();
+         document.getElementById("btnSignIn").disabled = false;
+
+    }
+
+
+            function initAPP(){
+                document.title = jQuery.i18n.prop("lTitleUAPXC");
+
+               // document.getElementById("lVesrion").innerHTML = versionString;
+                document.getElementById("lacopyright").innerHTML = jQuery.i18n.prop("lacopyright");
+                initmb();
+
+	        var qs_complete;
+	        var xml = getData("qs_complete");
+                qs_complete=$(xml).find("qs_complete").text();
+	        if ( qs_complete == "0" ) {
+                    sm("MBQuickSetup",450,320);
+                    localizeQuickSetupMB();
+                }
+                else
+                {
+                    createMenuFromXML();
+                    createMenu(1);
+                }
+	    }
+
+
+	function btnSkipQSClicked()
+        {
+            if(document.getElementById("chkSkip").checked) {
+	       	var mapData = new Array(0);
+	        mapData = putMapElement(mapData,"RGW/management/qs_complete","1",0);
+	        postXML("qs_complete", g_objXML.getXMLDocToString(g_objXML.createXML(mapData)));
+            }
+            document.getElementById("lableWelcome").innerHTML = jQuery.i18n.prop("lableWelcome");
+            document.getElementById("quickSetupSpan").innerHTML = '<a href="#."  onclick="quickSetup()" id="quickSetup" >Quick Setup</a>  |  <a href="#." id="HelpName" onclick="getMainHelp()">Help</a>  |  <a href="#."  id="LogOutName"  onclick="logOut()">Log Out</a>';
+			document.getElementById("quickSetup").innerHTML = jQuery.i18n.prop("quickSetupName");
+			document.getElementById("HelpName").innerHTML = jQuery.i18n.prop("helpName");
+			document.getElementById("LogOutName").innerHTML = jQuery.i18n.prop("LogOutName");
+			$("#zmlogo").attr("src",zml);
+	  		hm();
+            createMenuFromXML();
+            createMenu(1);
+
+        }
+        </script>
+    </head>
+    <body onload="initIndex()" class="loginBody">
+        <div class="liginbox" id="divAdminApp">
+	 <div>
+            <img id="zlogoblue" src="" alt="" />
+            <div style=" height:55px;float:right;vertical-align: middle;margin-left: auto;margin-right: auto;margin-right: auto;text-align: center;line-height:55px;">
+            	<label id="scopyright" style="display:inline;font-weight: bold;padding-left:0;padding-right:0px;padding-bottom:0px;"></label>
+            	<div style="display:inline"><img id="iindexstatusimg"  style="padding-top: 22px; padding-right: 10px;" src="" alt="" /></div>
+            </div>
+				</div><br class="clear" />
+            <div class="box1">
+                <div class="title_box">
+                <div class="box2" style="float:right;opacity: 0.5;padding-top: 0px;">
+                   <a id="lvhomepage" target="_blank" href="http://www.zmifi.com" style="color:#fff;">访问官网</a>
+                </div><div id="langswitch">
+                    &nbsp
+               </div></div>
+                                <div class="box4" style="float:right;opacity: 1;">
+					
+                </div><br class="clear">
+                <div class="box3">
+                    <label id='laUsername' style="display:none"></label>
+                    <input type='text'  name='router_username' style="display:none" maxlength="32" value='admin' id='tbarouter_username' class='textfield' onchange='hideError()' />
+                    <br />
+                    <label id='laPassword'></label>
+                    <input type='password' value='' id='tbarouter_password' maxlength="32" class='textfield' onkeypress='checkEnter(event)' />
+                    <br />
+                    <label class='error' id='lloginfailed'  style='display: none'>Invalid username or password </label>
+                    <label class='error' id='E7683FTEFTA8HT08HFH09'  style='display: none'>Please wait</label>
+                    <input name="" type="button" class="button" id="btnSignIn" value="登录" onclick='Login()' disabled=""/></div>
+            </div>
+            <label id="lacopyright" class="copy" style="align:left;display:none">Copyright 2017, All Rights Reserved</label>
+        </div>
+        
+        
+
+	
+      
+
+    </body>
+</html>

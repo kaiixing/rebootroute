@@ -1,0 +1,59 @@
+#mbox, .popUpBox{width:325px; background:#fff;white-space:normal;word-wrap:break-word;word-break:break-all; word-spacing: normal;}
+#mbm{font-family:sans-serif;font-weight:bold;float:right;padding-bottom:5px;}
+#ol{background-image: url(../images/overlay.png);}
+.dialog {display:none;  }
+#mbox .butCont {	text-align:left; padding:20px 0 0 0; border-top:1px solid #bfc5b8; margin:10px 0 0 0	}
+#mbox .butCont1 {	text-align:center; padding:20px 0 0 0; border-top:1px solid #bfc5b8; margin:10px 0 0 0	}
+#mbox label, .popUpBox label	{	display:block; font-weight:bold; color:#666; font-size:12px; padding:5px 0	}
+#mbox input, #mbox .popUpBox2 input, .popUpBox2 select	{ border:1px solid #999999; padding:2px 1px 2px 4px; color:#333;   font:normal 12px Arial, Helvetica, sans-serif; list-style:14px; margin-bottom:7px; height:19px			}
+#mbox input button:hover, #mbox .popUpBox2 input button:hover{background:#297ccc;color:#fff;}
+#mbox input:focus, #mbox .popUpBox2 input:focus{ border:1px solid #297acc;}
+#mbox .popUpBox2 select {	width:208px; height:24px;	}
+#mbox input {	 width:300px; 	}
+#mbox .popUpBox2, #mbox .popUpBox3 {	margin:-3px	}
+#mbox .popUpBox3 {	width:600px;  	}
+#mbox .popUpBox2 input {	width:200px;}
+#mbox .popUpBox2 input.mid {	width:89px;	}
+#mbox .popUpBox2 input.sml {	width:30px;	}
+
+#mbox h1, .popUpBox h1	{          margin:0 0 10px 0; padding:6px 10px; background:#297acc; font:bold 14px Arial, Helvetica, sans-serif; color:#fff; float:left; height:16px;  width:300px       }
+#mbox  a.close , .popUpBox a.close{                background:#297acc; font:bold 19px Calibri; float:left; height:22px; width:30px; color:#fff; text-align:center; padding:4px 0  2px 0            }
+
+ #mbox .error 	{	font:normal 11px Arial, Helvetica, sans-serif;   color:#f00	}
+.bufferBox1 {	 width:320px;
+margin: 0 0 0 10px; border:1px solid #5a820e; display:block ; text-align:left	}
+.bufferBox {  height:20px ; background:url(../images/loading-bar.png) repeat-x;      	}
+* html #ol{background-image:none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src="../images/overlay.png", sizingMethod="scale");}
+
+
+#mbox .popUpBox2 {	width:450px;	}
+#mbox .popUpBox2 h1  {	 width:400px	}
+#mbox .pBoxCont {	padding:8px;vertical-align: middle;	}
+#mbox .popUpBox3 .pBoxCont {	padding:15px	}
+#mbox .pBoxCont label {	width:143px; float:left	}
+#mbox .popUpBox .lable12, #mbox .popUpBox .lable13 {	float:none; width:80%; text-align:center; margin:0 auto 10px auto; font-weight:normal; color:#333 	}
+#mbox .popUpBox .lable13 {	color:#f00		}
+
+#mbox input.chk {	border:0; width:20px; padding:0; float:left; margin:0px 3px 0 0	}
+
+h2.subtlt {	padding:10px 0 0 0; margin:0; color:#297acc; font-size:17px;	}
+a.quickSetUp {	width:209px; height:48px; display:block; background:url(http://192.168.21.1/images/button-bg.gif) no-repeat;  cursor:pointer;  margin:20px auto 40px auto}
+a.quickSetUp:hover {	 background:url(http://192.168.21.1/images/quick_setup1.gif) no-repeat;	}
+.popUpBox3 p {	margin:0; padding:10px 0 ; 	}
+
+
+.buttonRow1 {	border-top:1px solid #a7a7a7; padding:7px 0; margin:7px 0 0 0; text-align:right	}
+a.cancel {	text-decoration:underline; font-weight:bold; float:right; padding:10px 15px  5px 15px; font-weight:bold;   	}
+.buttonRow1 a:hover {	text-decoration:none	}
+
+#mbox .popUpBox2 .boxCont2 strong, #mbox .popUpBox2 .boxCont2 input{  float:left;  }
+ #mbox .popUpBox2 .boxCont2 strong {	padding:5px 2px 0 2px 	}
+
+#mbox .btnWrp {color:#fff;	margin:0 0 0 2px; padding:0; display:inline-block; *display:inline; background:#297acc; height:31px; padding-right:0;  height:31px;	}
+#mbox .btnWrp:hover {background:#4896fa;color:#fff;}
+#mbox .btnWrp input, #mbox .btnWrp button {	border:0; background:#297acc; padding:3px 14px 4px 14px; font:bold 13px Arial; color:#fff; cursor:pointer; height:31px;  margin:0; *padding:3px 8px 4px 8px;	}
+#mbox .btnWrp input, #mbox .btnWrp button {	 height:31px; width:90px;	}
+
+#mbox .skip {	margin:-5px 0 5px 0;	}
+#mbox .skip input {	  width:80px;	}
+#mbox .clear {clear:both;}
