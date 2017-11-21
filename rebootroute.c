@@ -106,3 +106,6 @@ strcpy(buff,"GET /xml_action.cgi?method=get&module=duster&file=qs_complete HTTP/
 
 	return 0;
 }
+
+
+
