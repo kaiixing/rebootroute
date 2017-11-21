@@ -9,6 +9,8 @@
 #define SRV_PORT 80  //server port
 #define SRV_IP "192.168.21.1"  //server ip
 
+
+
 int main(int argc,char** argv)
 {
 
