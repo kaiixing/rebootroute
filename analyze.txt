@@ -1,0 +1,91 @@
+1、登陆之前，先发送getAuthType请求如下,
+并在ajax中通过getResponseHeader('WWW-Authenticate')得到loginParam
+GET /login.cgi?_=1510912307156 HTTP/1.1
+Host: 192.168.21.1
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12
+Accept: */*
+Accept-Language: zh-cn,zh;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+Expires: -1
+Cache-Control: no-store, no-cache, must-revalidate
+Pragma: no-cache
+X-Requested-With: XMLHttpRequest
+Referer: http://192.168.21.1/
+Cookie: locale=cn; hard_ver=Ver.A; platform=mifi
+
+HTTP/1.1 200 OK
+WWW-Authenticate: Digest realm="Highwmg", nonce="10782968", qop="auth"
+2、得到的loginParam为 Digest realm="Highwmg", nonce="10782968", qop="auth"
+空白符分之。得到如下值
+loginParamArry[0]="Digest"
+Authrealm="Highwmg
+nonce="10782968"
+AuthQop="auth"
+同时通过函数传参数得到username="admin",passwd="kaiixing919616"
+3、拼接username Authrealm passwd后进行hex_md5加密得到
+HA1=hex_md5(username+":"+Authrealm+":"+passwd);
+   =hex_md5("admin:Highwmg:kaiixing919616")
+   ="07851e12295ecbd45d774f59ff362f50"
+HA2=hex_md5("GET"+":"+"/cgi/protected.cgi");
+   =hex_md5("GET:/cgi/protected.cgi");
+   ="202fe3ae6688ea0a29cec56f47556821"
+然后通过Math.floor(math.random()*100001) 产生一个随机数，
+new Date().getTime()得到距 1970 年 1 月 1 日之间的毫秒数。拼接后作为盐MD5加密
+tmp=hex_md5(rand+""+date)
+   =hex_md5(....)
+取出tmp的前16个字符作为AuthCnonce
+
+4、产生DigestRes
+DigestRes=hex_md5(HA1+":"+nonce+":"+"00000001"+":"+AuthCnonce+":"+AuthQop+":"HA2)
+         =hex_md5(07851e12295ecbd45d774f59ff362f50:nonce:00000001+\
+         Authnonce:auth:202fe3ae6688ea0a29cec56f47556821
+         
+ 5、生成url,其中的response就是现在产生的DigestRes，
+ cnonce就是第3步生成的AuthCnonce
+ url=http://192.168.21.1/login.cgi?Action=Digest
+ &username=admin
+ &realm=Highwmg&nonce=10782968
+ &response=5588291a7cb0b9e8b323e75f14bc5b74&qop=auth
+ &cnonce=6440083f72b7465b&temp=marvell&_=1510912307157 HTTP/1.1\r\n
+  
+6、向服务器通过ajax发起请求，返回如下
+HTTP/1.1 200 OK
+Content-Type: text/html
+Server: Mongoose/3.0
+login函数返回一个strResponse="
+Digest username="admin", realm="Highwmg", 
+nonce="10782968", uri="/cgi/xml_action.cgi", 
+response="27fecb8010b765d9e81c208c5d098c4d", 
+qop=auth, nc=00000003, cnonce="98d102d9c2be55f6""
+
+登陆成功
+
+7、点击重启按钮后触发onclick='rebootRouter()'
+rebootRouter(){
+sm('rebootRouterBox',360,120);
+...
+
+}
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
