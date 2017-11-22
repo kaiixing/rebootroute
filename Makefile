@@ -1,4 +1,7 @@
-a.out: rebootroute.c
-	gcc rebootroute.c
+CC=gcc
+CFLAGS=-O
+OBJS=md5.o rebootroute.o
+rebootroute:${OBJS}
+	${CC} -o rebootroute ${CFLAGS} ${OBJS}
 clean:
-	rm -rfv a.out
+	rm -rfv ${TARGET} ${OBJS}
