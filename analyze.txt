@@ -67,6 +67,56 @@ sm('rebootRouterBox',360,120);
 ...
 
 }
+
+
+
+
+
+
+注意：每次提交的http头中的response是通过utils.js中的getAuthHeader生成
+function getAuthHeader(requestType,file) {
+    // return getCookie("Authheader");
+    var rand, date, salt, strAuthHeader;
+    var  tmp, DigestRes,AuthCnonce_f;
+    var HA1, HA2;
+
+
+
+    HA1 = hex_md5(username+ ":" + Authrealm + ":" + passwd);
+    HA2 = hex_md5( requestType + ":" + "/cgi/xml_action.cgi");
+
+    rand = Math.floor(Math.random()*100001)
+           date = new Date().getTime();
+
+    salt = rand+""+date;
+    tmp = hex_md5(salt);
+    AuthCnonce_f = tmp.substring(0,16);
+    //AuthCnonce_f = tmp;
+
+    var strhex = hex(GnCount);
+    var temp = "0000000000" + strhex;
+    var  Authcount = temp.substring(temp.length-8);
+    DigestRes =hex_md5(HA1 + ":" + nonce + ":" + Authcount + ":" +
+AuthCnonce_f  + ":" + AuthQop + ":"+ HA2);
+
+
+    GnCount++;
+    strAuthHeader = "Digest " + "username=\"" + username + "\", realm=\"" +
+Authrealm + "\", nonce=\"" + nonce + "\", uri=\"" + "/cgi/xml_action.cgi" +
+"\", response=\"" + DigestRes + "\", qop=" + AuthQop + ", nc=" + Authcount +
+", cnonce=\"" + AuthCnonce_f  + "\"" ;
+    DigestHeader = strAuthHeader ;
+    return strAuthHeader;
+}
+
+
+下面的代码可以测试生成的随机数和当前的日期时间值
+function t(){
+    rand = Math.floor(Math.random()*100001)
+           date = new Date().getTime();
+return rand
+}
+
    
    
    
