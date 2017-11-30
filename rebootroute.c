@@ -1,18 +1,57 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<math.h>
 #include<sys/types.h>
 #include<sys/socket.h>
 #include<errno.h>
 #include<netinet/in.h>
 #include<arpa/inet.h>
+#include<openssl/md5.h>
+#include<sys/timeb.h>
 #define SRV_PORT 80  //server port
 #define SRV_IP "192.168.21.1"  //server ip
 
 
+// Make the response in url
+char * MakeAuthCnonce()
+{
+unsigned char md[16]={0};
+struct timeval tv;  // intent to get millseconds since 1970:00:00:00 UTC
+gettimeofday(&tv,NULL);
+int  r=(int)ceil(fabs(sin(rand()%100+1))*100001);
+char strbuf[32]={0};
+printf("RAND_MAX=%d\ntv=%ld\nr=%d\n",RAND_MAX,tv.tv_sec*1000+tv.tv_usec/1000,r);
+sprintf(strbuf,"%d%ld",r,tv.tv_sec*1000+tv.tv_usec/1000);
+printf("comp:%s\n",strbuf);
+
+MD5_CTX ctx;
+MD5_Init(&ctx);
+MD5_Update(&ctx,strbuf,strlen(strbuf));
+MD5_Final(md,&ctx);
+
+int i=0;
+char buf[33]={0};
+char tmp[3]={0};
+for(i=0;i<16;i++)
+{
+  sprintf(tmp,"%02x",md[i]);
+strcat(buf,tmp);
+}
+printf("md5 before sub:%s\n",buf);
+memset(buf+16,0,16);
+printf("md5:%s\n",buf);
+return buf;
+}
+
 
 int main(int argc,char** argv)
 {
+
+
+	srand(time(NULL));
+MakeAuthCnonce();
+return 0;
 
 	//1.Create socket fd
 	int s=socket(AF_INET,SOCK_STREAM,0);
@@ -72,6 +111,8 @@ int main(int argc,char** argv)
 	//strcpy(buff,"GET /login.cgi?_=1510628282798 HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nX-Requested-With: XMLHttpRequest\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n");
 //	strcpy(buff,"GET /login.cgi?_=1520628289768 HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nExpires: -1\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nReferer: http://192.168.21.1/\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n");
 //strcpy(buff,"GET /login.cgi?_=1510912327128 HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nExpires: -1\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nReferer: http://192.168.21.1/\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n");
+//make response str
+char response[33]={0};
 strcpy(buff,"GET /xml_action.cgi?method=get&module=duster&file=qs_complete HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: application/xml, text/xml, */*; q=0.01\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nAuthorization: Digest username=\"admin\", realm=\"Highwmg\", nonce=\"10782968\", uri=\"/cgi/xml_action.cgi\", response=\"63c97e126c3180f4512a9e2932d129e2\", qop=auth, nc=00000004, cnonce=\"8b2fbc2099ad78e1\"\r\nX-Requested-With: XMLHttpRequest\r\nReferer: http://192.168.21.1/\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n");
 
 	send(s,buff,strlen(buff),0);

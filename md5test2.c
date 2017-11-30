@@ -3,19 +3,10 @@
 #include<string.h>
 #include<openssl/md5.h>
 
-void  bin2hex(char * buff)
-{
-  int i=0;
-while(buff[i++]!=0)
-{
-  printf("%x",(int)buff[i]);
-}
-printf("\n");
-}
 int main(int argc,char ** argv)
 {
-    //const char *data = "hellohellowoildhellohellowoildhellohellowoildhellohellowoild";  
-    const char *data = "admin:Highwmg:kaiixing919616";  
+    //const char *data = "GET:/cgi/protected.cgi";  
+    const char *data = "398681512012405296";  
     unsigned char md[16] = {0};    
     
     MD5_CTX ctx;    
@@ -28,7 +19,7 @@ int main(int argc,char ** argv)
     char tmp[3] = {0};    
     for(i = 0; i < 16; i++ )    
     {    
-        sprintf(tmp,"%02X", md[i]);    
+        sprintf(tmp,"%02x", md[i]);    
         strcat(buf, tmp);    
     }
     printf("%s\n",buf);
