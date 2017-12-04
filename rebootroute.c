@@ -43,9 +43,7 @@ char * MakeAuthCnonce(char *Authdst)
 	sprintf(strbuf,"%d%ld",r,tv.tv_sec*1000+tv.tv_usec/1000);
 	printf("comp:%s\n",strbuf);
 
-	char out[33]={0};
-	printf("use hex_md5 result:%s\n",hex_md5(strbuf,out));
-	memcpy(Authdst,out,33);
+	printf("use hex_md5 result:%s\n",hex_md5(strbuf,Authdst));
 	return Authdst;
 }
 
@@ -76,7 +74,7 @@ int SendAndRecvHeader(char *sendstr,char *recvstr,int recvlen,int sock)
 		}
 		else
 		{
-			printf("recv data length :%d\n",strlen(buff));
+			//printf("recv data length :%d\n",strlen(buff));
 			memset(buff,0,1024*20);
 			continue;
 		}
@@ -162,34 +160,38 @@ int main(int argc,char** argv)
 	memset(bufrecv,0,1024*20);
         struct timeval tv;  // intent to get millseconds since 1970:00:00:00 UTC
         gettimeofday(&tv,NULL);
-sprintf(buff,"GET /login.cgi?_=%ld HTTP/1.1\r\nHost: 192.168.21.1\r\nProxy-Connection: keep-alive\r\nCache-Control: no-store, no-cache, must-revalidate\r\nAccept: */*\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nUser-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/537.36\r\nExpires: -1\r\nReferer: http://192.168.21.1/\r\nAccept-Encoding: gzip,deflate,sdch\r\nAccept-Language: zh-CN,zh;q=0.8\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n",tv.tv_sec*1000+tv.tv_usec/1000);
+//sprintf(buff,"GET /login.cgi?_=%ld HTTP/1.1\r\nHost: 192.168.21.1\r\nProxy-Connection: keep-alive\r\nCache-Control: no-store, no-cache, must-revalidate\r\nAccept: */*\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nUser-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/537.36\r\nExpires: -1\r\nReferer: http://192.168.21.1/\r\nAccept-Encoding: gzip,deflate,sdch\r\nAccept-Language: zh-CN,zh;q=0.8\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n",tv.tv_sec*1000+tv.tv_usec/1000);
 printf("begin send login.cgi?_=...\n");
 	strcpy(buff,"GET /login.cgi?_=1510628282798 HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nX-Requested-With: XMLHttpRequest\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n");
 SendAndRecvHeader(buff,bufrecv,1024*20,GetOneSock());
 printf("%s\n",bufrecv);
-getchar();
+char *nonce_start=strstr(bufrecv,"nonce=")+7;
+char *nonce_end=strstr(bufrecv,"qop=")-3;
+char non[10]={0};
+printf("%x---%x,end-start=%d\n",nonce_start,nonce_end,nonce_end-nonce_start);
+char authcnonce[17]={0};
+strncpy(non,nonce_start,nonce_end-nonce_start);
+printf("get non:%s\n",non);
+char urlres[256]={0};
+printf("get non before MakeAuthConce:%s\n",non);
+MakeAuthCnonce(authcnonce);
+printf("get non after MakeAuthConce:%s\n",non);
+char response[33]={0};
+sprintf(urlres,"07851e12295ecbd45d774f59ff362f50:%s:00000001:%s:auth:202fe3ae6688ea0a29cec56f47556821",non,authcnonce);
+printf("response before:%s\n",urlres);
+printf("response:%s\n",hex_md5(urlres,response));
+
+//Make Login header
+memset(buff,0,1024*20);
+gettimeofday(&tv,NULL);
+sprintf(buff,"GET /login.cgi?Action=Digest&username=admin&realm=Highwmg&nonce=%s&response=%s&qop=auth&cnonce=%s&temp=marvell&_=%ld HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nAuthorization: Digest username=\"admin\", realm=\"Highwmg\", nonce=\"%s\", uri=\"/cgi/xml_action.cgi\", response=\"%s\", qop=auth, nc=00000003, cnonce=\"%s\"\r\nExpires: -1\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nReferer: http://192.168.21.1/\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n",non,response,authcnonce,tv.tv_sec*1000+tv.tv_usec/1000,non,response,authcnonce);
+printf("\nbegin login request headers:%s\n",buff);
 return 0;
 
-	//strcpy(buff,"GET /login.cgi?_=1510628282798 HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nX-Requested-With: XMLHttpRequest\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n");
-	//	strcpy(buff,"GET /login.cgi?_=1520628289768 HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nExpires: -1\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nReferer: http://192.168.21.1/\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n");
-	//strcpy(buff,"GET /login.cgi?_=1510912327128 HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nExpires: -1\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nReferer: http://192.168.21.1/\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n");
-	//make response str
-	char response[33]={0};
-
-	strcpy(buff,"GET /xml_action.cgi?method=get&module=duster&file=qs_complete HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: application/xml, text/xml, */*; q=0.01\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nAuthorization: Digest username=\"admin\", realm=\"Highwmg\", nonce=\"10782968\", uri=\"/cgi/xml_action.cgi\", response=\"63c97e126c3180f4512a9e2932d129e2\", qop=auth, nc=00000004, cnonce=\"8b2fbc2099ad78e1\"\r\nX-Requested-With: XMLHttpRequest\r\nReferer: http://192.168.21.1/\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n");
-
-	send(s,buff,strlen(buff),0);
-	printf("send open login success..\n");
-	memset(buff,0,1024*20);
-	recv(s,buff,1024*20,0);
-	printf("recv data:%d--->\n%s",strlen(buff),buff);
-	memset(buff,0,1024*20);
 
 	free(buff);
 	close(s);
 
 	return 0;
 }
-
-
 

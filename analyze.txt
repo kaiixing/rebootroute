@@ -20,7 +20,7 @@ WWW-Authenticate: Digest realm="Highwmg", nonce="10782968", qop="auth"
 空白符分之。得到如下值
 loginParamArry[0]="Digest"
 Authrealm="Highwmg
-nonce="10782968"
+nonce="10782968" ( 此值不固定）
 AuthQop="auth"
 同时通过函数传参数得到username="admin",passwd="kaiixing919616"
 3、拼接username Authrealm passwd后进行hex_md5加密得到
