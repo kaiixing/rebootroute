@@ -31,20 +31,26 @@ char* hex_md5(char* str,char *out)
 	return out;
 }
 
-// Make the response in url
-char * MakeAuthCnonce(char *Authdst)
+// Make the response in url,get cnonce,response
+char * MakeResponse(char *Innonce,char *cnonce,char *Response)
 {
-	unsigned char md[16]={0};
+	//unsigned char md[17]={0};
 	struct timeb tb;  // intent to get millseconds since 1970:00:00:00 UTC
- 
+
 	ftime(&tb);
 	int  r=(int)ceil(fabs(sin(rand()%100+1))*100001);
 	char strbuf[33]={0};
-	printf("RAND_MAX=%d\ntv=%ld\nr=%d\n",RAND_MAX,tb.time*1000+tb.millitm,r);
+	char strtmp[33]={0};
+	char urlres[128]={0};
 	sprintf(strbuf,"%d%ld",r,tb.time*1000+tb.millitm);
-	printf("strbuf in MakeAuthCnonce:%s\n",strbuf);
-	printf("use hex_md5 result:%s\n",hex_md5(strbuf,Authdst));
-	return Authdst;
+	printf("use hex_md5 result:%s\n",hex_md5(strbuf,strtmp));
+	memset(strtmp+16,0,16);
+	strcpy(cnonce,strtmp);//get cnonce,front 16 chars of strtmp
+	printf("Make a cnonce is :%s\n",cnonce);
+
+	sprintf(urlres,"07851e12295ecbd45d774f59ff362f50:%s:00000001:%s:auth:202fe3ae6688ea0a29cec56f47556821",Innonce,strtmp);
+	printf("Make a response in MakeResponse:%s\n",hex_md5(urlres,Response));
+	return Response;
 }
 
 //send string and recv http header
@@ -60,7 +66,7 @@ int SendAndRecvHeader(char *sendstr,char *recvstr,int recvlen,int sock)
 
 	memset(recvstr,0,recvlen);
 	int ret=send(sock,sendstr,strlen(sendstr),0);
-	printf("send header success:%d...,header:\n%s\n",ret,sendstr);
+	printf("send header success:%d...,header:\n---------------------send\n%s\n---------------------send\n",ret,sendstr);
 
 	while(recv(sock,buff,recvlen,0)>0)
 	{
@@ -79,7 +85,7 @@ int SendAndRecvHeader(char *sendstr,char *recvstr,int recvlen,int sock)
 			continue;
 		}
 	}
-free(buff);
+	free(buff);
 
 
 	return 0;
@@ -111,7 +117,7 @@ int GetOneSock()
 
 	}
 	return s;
-  
+
 }
 
 
@@ -152,44 +158,46 @@ int main(int argc,char** argv)
 	memset(buff,0,1024*20);
 	memset(bufrecv,0,1024*20);
 	SendAndRecvHeader("GET / HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\n\r\n",bufrecv,1024*20,s);
-        printf("%s\n",bufrecv);
+	printf("\n--------------------------recv\n%s\n---------------------------recv\n",bufrecv);
 
 	//5.login
 	//get nonce
 	memset(buff,0,1024*20);
 	memset(bufrecv,0,1024*20);
-        struct timeb tb;  // intent to get millseconds since 1970:00:00:00 UTC
+	struct timeb tb;  // intent to get millseconds since 1970:00:00:00 UTC
 	ftime(&tb);
-//sprintf(buff,"GET /login.cgi?_=%ld HTTP/1.1\r\nHost: 192.168.21.1\r\nProxy-Connection: keep-alive\r\nCache-Control: no-store, no-cache, must-revalidate\r\nAccept: */*\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nUser-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/537.36\r\nExpires: -1\r\nReferer: http://192.168.21.1/\r\nAccept-Encoding: gzip,deflate,sdch\r\nAccept-Language: zh-CN,zh;q=0.8\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n",tv.tv_sec*1000+tv.tv_usec/1000);
-printf("begin send login.cgi?_=...\n");
-	strcpy(buff,"GET /login.cgi?_=1510628282798 HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nX-Requested-With: XMLHttpRequest\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n");
-SendAndRecvHeader(buff,bufrecv,1024*20,GetOneSock());
-printf("%s\n",bufrecv);
-char *nonce_start=strstr(bufrecv,"nonce=")+7;
-char *nonce_end=strstr(bufrecv,"qop=")-3;
-char non[10]={0};
-printf("%x---%x,end-start=%d\n",nonce_start,nonce_end,nonce_end-nonce_start);
-char authcnonce[17]={0};
-strncpy(non,nonce_start,nonce_end-nonce_start);
-printf("get non:%s\n",non);
-char urlres[256]={0};
-printf("get non before MakeAuthConce:%s\n",non);
-MakeAuthCnonce(authcnonce);
-printf("get non after MakeAuthConce:%s\n",non);
-char response[33]={0};
-sprintf(urlres,"07851e12295ecbd45d774f59ff362f50:%s:00000001:%s:auth:202fe3ae6688ea0a29cec56f47556821",non,authcnonce);
-printf("response before:%s\n",urlres);
-printf("response:%s\n",hex_md5(urlres,response));
-
-//Make Login header
-memset(buff,0,1024*20);
-ftime(&tb);
-sprintf(buff,"GET /login.cgi?Action=Digest&username=admin&realm=Highwmg&nonce=%s&response=%s&qop=auth&cnonce=%s&temp=marvell&_=%ld HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nAuthorization: Digest username=\"admin\", realm=\"Highwmg\", nonce=\"%s\", uri=\"/cgi/xml_action.cgi\", response=\"%s\", qop=auth, nc=00000003, cnonce=\"%s\"\r\nExpires: -1\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nReferer: http://192.168.21.1/\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n",non,response,authcnonce,tb.time*1000+tb.millitm,non,response,authcnonce);
-printf("\nbegin login request headers:%s\n",buff);
-return 0;
-
-
+	sprintf(buff,"GET /login.cgi?_=%ld HTTP/1.1\r\nHost: 192.168.21.1\r\nProxy-Connection: keep-alive\r\nCache-Control: no-store, no-cache, must-revalidate\r\nAccept: */*\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nUser-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/537.36\r\nExpires: -1\r\nReferer: http://192.168.21.1/\r\nAccept-Encoding: gzip,deflate,sdch\r\nAccept-Language: zh-CN,zh;q=0.8\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n",tb.time*1000+tb.millitm);
+	printf("begin send login.cgi?_=15918834374...\n\n------------------------%s-------------------\n\n\n",buff);
+	SendAndRecvHeader(buff,bufrecv,1024*20,GetOneSock());
+	printf("\n--------------------------recv\n%s\n---------------------------recv\n",bufrecv);
+	char *nonce_start=strstr(bufrecv,"nonce=")+7;
+	char *nonce_end=strstr(bufrecv,"qop=")-3;
+	char nonce[10]={0}; //get from http response header
+	char cnonce[17]={0}; //cnonce,front 16 chars of AuthCnonce
+	char response[33]={0};//make from MakeResponse
+	printf("%x--------------------------%x,end-start=%d\n",nonce_start,nonce_end,nonce_end-nonce_start);
+	strncpy(nonce,nonce_start,nonce_end-nonce_start);
+	printf("get nonce:%s\n",nonce);
+	MakeResponse(nonce,cnonce,response);  //get nonce,cnonce,response
+	//Make Login header
+	ftime(&tb);
+	memset(buff,0,1024*20);
+	memset(bufrecv,0,1024*20);
+	sprintf(buff,"GET /login.cgi?Action=Digest&username=admin&realm=Highwmg&nonce=%s&response=%s&qop=auth&cnonce=%s&temp=marvell&_=%ld HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nAuthorization: Digest username=\"admin\", realm=\"Highwmg\", nonce=\"%s\", uri=\"/cgi/xml_action.cgi\", response=\"%s\", qop=auth, nc=00000003, cnonce=\"%s\"\r\nExpires: -1\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nReferer: http://192.168.21.1/\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n",nonce,response,cnonce,tb.time*1000+tb.millitm,nonce,response,cnonce);
+	printf("\nbegin login request headers:%s\n",buff);
+	SendAndRecvHeader(buff,bufrecv,1024*20,GetOneSock());
+	printf("\n--------------------------recv\n%s\n---------------------------recv\n",bufrecv);
+	//begin to restart reboot
+	memset(buff,0,1024*20);
+	memset(bufrecv,0,1024*20);
+	memset(cnonce,0,17);
+	memset(response,0,33);
+	MakeResponse(nonce,cnonce,response);  //get nonce,cnonce,response
+	sprintf(buff,"GET /xml_action.cgi?method=get&module=duster&file=reset HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: application/xml, text/xml, */*; q=0.01\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nAuthorization: Digest username=\"admin\", realm=\"Highwmg\", nonce=\"%s\", uri=\"/cgi/xml_action.cgi\", response=\"%s\", qop=auth, nc=00000008, cnonce=\"%s\"\r\nX-Requested-With: XMLHttpRequest\r\nReferer: http://192.168.21.1/\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n",nonce,response,cnonce);
+	SendAndRecvHeader(buff,bufrecv,1024*20,GetOneSock());
+	printf("\n--------------------------recv\n%s\n---------------------------recv\n",bufrecv);
 	free(buff);
+	free(bufrecv);
 	close(s);
 
 	return 0;
