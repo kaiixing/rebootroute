@@ -53,6 +53,7 @@ DigestRes=hex_md5(HA1+":"+nonce+":"+"00000001"+":"+AuthCnonce+":"+AuthQop+":"HA2
 HTTP/1.1 200 OK
 Content-Type: text/html
 Server: Mongoose/3.0
+
 login函数返回一个strResponse="
 Digest username="admin", realm="Highwmg", 
 nonce="10782968", uri="/cgi/xml_action.cgi", 

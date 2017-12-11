@@ -35,14 +35,14 @@ char* hex_md5(char* str,char *out)
 char * MakeAuthCnonce(char *Authdst)
 {
 	unsigned char md[16]={0};
-	struct timeval tv;  // intent to get millseconds since 1970:00:00:00 UTC
-	gettimeofday(&tv,NULL);
+	struct timeb tb;  // intent to get millseconds since 1970:00:00:00 UTC
+ 
+	ftime(&tb);
 	int  r=(int)ceil(fabs(sin(rand()%100+1))*100001);
-	char strbuf[32]={0};
-	printf("RAND_MAX=%d\ntv=%ld\nr=%d\n",RAND_MAX,tv.tv_sec*1000+tv.tv_usec/1000,r);
-	sprintf(strbuf,"%d%ld",r,tv.tv_sec*1000+tv.tv_usec/1000);
-	printf("comp:%s\n",strbuf);
-
+	char strbuf[33]={0};
+	printf("RAND_MAX=%d\ntv=%ld\nr=%d\n",RAND_MAX,tb.time*1000+tb.millitm,r);
+	sprintf(strbuf,"%d%ld",r,tb.time*1000+tb.millitm);
+	printf("strbuf in MakeAuthCnonce:%s\n",strbuf);
 	printf("use hex_md5 result:%s\n",hex_md5(strbuf,Authdst));
 	return Authdst;
 }
@@ -158,8 +158,8 @@ int main(int argc,char** argv)
 	//get nonce
 	memset(buff,0,1024*20);
 	memset(bufrecv,0,1024*20);
-        struct timeval tv;  // intent to get millseconds since 1970:00:00:00 UTC
-        gettimeofday(&tv,NULL);
+        struct timeb tb;  // intent to get millseconds since 1970:00:00:00 UTC
+	ftime(&tb);
 //sprintf(buff,"GET /login.cgi?_=%ld HTTP/1.1\r\nHost: 192.168.21.1\r\nProxy-Connection: keep-alive\r\nCache-Control: no-store, no-cache, must-revalidate\r\nAccept: */*\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nUser-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.137 Safari/537.36\r\nExpires: -1\r\nReferer: http://192.168.21.1/\r\nAccept-Encoding: gzip,deflate,sdch\r\nAccept-Language: zh-CN,zh;q=0.8\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n",tv.tv_sec*1000+tv.tv_usec/1000);
 printf("begin send login.cgi?_=...\n");
 	strcpy(buff,"GET /login.cgi?_=1510628282798 HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nX-Requested-With: XMLHttpRequest\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n");
@@ -183,8 +183,8 @@ printf("response:%s\n",hex_md5(urlres,response));
 
 //Make Login header
 memset(buff,0,1024*20);
-gettimeofday(&tv,NULL);
-sprintf(buff,"GET /login.cgi?Action=Digest&username=admin&realm=Highwmg&nonce=%s&response=%s&qop=auth&cnonce=%s&temp=marvell&_=%ld HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nAuthorization: Digest username=\"admin\", realm=\"Highwmg\", nonce=\"%s\", uri=\"/cgi/xml_action.cgi\", response=\"%s\", qop=auth, nc=00000003, cnonce=\"%s\"\r\nExpires: -1\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nReferer: http://192.168.21.1/\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n",non,response,authcnonce,tv.tv_sec*1000+tv.tv_usec/1000,non,response,authcnonce);
+ftime(&tb);
+sprintf(buff,"GET /login.cgi?Action=Digest&username=admin&realm=Highwmg&nonce=%s&response=%s&qop=auth&cnonce=%s&temp=marvell&_=%ld HTTP/1.1\r\nHost: 192.168.21.1\r\nUser-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:10.0.12) Gecko/20130104 Firefox/10.0.12\r\nAccept: */*\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive\r\nAuthorization: Digest username=\"admin\", realm=\"Highwmg\", nonce=\"%s\", uri=\"/cgi/xml_action.cgi\", response=\"%s\", qop=auth, nc=00000003, cnonce=\"%s\"\r\nExpires: -1\r\nCache-Control: no-store, no-cache, must-revalidate\r\nPragma: no-cache\r\nX-Requested-With: XMLHttpRequest\r\nReferer: http://192.168.21.1/\r\nCookie: locale=cn; hard_ver=Ver.A; platform=mifi\r\n\r\n",non,response,authcnonce,tb.time*1000+tb.millitm,non,response,authcnonce);
 printf("\nbegin login request headers:%s\n",buff);
 return 0;
 
